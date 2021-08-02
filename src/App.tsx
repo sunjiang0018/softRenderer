@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {RefObject} from 'react';
+import Renderer from "./core/Renderer";
+import './App.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component<any, any> {
+
+    height: number
+    width: number
+    canvasRef: RefObject<HTMLCanvasElement>
+    ctx:  CanvasRenderingContext2D| null | undefined
+    renderer: Renderer | null
+
+
+    constructor(props: Object) {
+        super(props);
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.canvasRef = React.createRef();
+        this.renderer = null;
+    }
+
+    componentDidMount() {
+        this.ctx = this.canvasRef.current?.getContext('2d')
+        if (!this.ctx) {
+            console.error('浏览器不支持！！')
+            return;
+        }
+
+        this.renderer = new Renderer(this.ctx,this.width,this.height)
+
+        this.renderer.start()
+    }
+
+    render() {
+        return <canvas id={'container'} width={this.width} height={this.height} ref={this.canvasRef}/>
+    }
+
 }
 
 export default App;
