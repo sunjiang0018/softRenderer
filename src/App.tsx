@@ -1,5 +1,5 @@
 import React, {RefObject} from 'react';
-import Renderer from "./core/Renderer";
+import Renderer from "./Core/Renderer";
 import './App.css'
 
 class App extends React.Component<any, any> {
