@@ -1,4 +1,4 @@
-import Vector2 from "./Vector2";
+import Vector2 from "../Vector/Vector2";
 
 export default class PARMLine2D {
     p0: Vector2

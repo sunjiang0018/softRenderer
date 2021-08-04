@@ -1,4 +1,4 @@
-import Vector3 from "./Vector3";
+import Vector3 from "../Vector/Vector3";
 
 export default class PARMLine3D{
     p0:Vector3
