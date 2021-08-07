@@ -57,6 +57,18 @@ export default class Matrix2 {
 
     }
 
+    add(m:Matrix2){
+        const te = this.elements
+        const me = m.elements
+
+        te[0] +=me[0]
+        te[1] +=me[1]
+        te[2] +=me[2]
+        te[3] +=me[3]
+
+        return this
+    }
+
     multiply(m: Matrix2) {
 
         return this.multiplyMatrices(this, m);

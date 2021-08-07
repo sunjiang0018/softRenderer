@@ -1,3 +1,4 @@
+import { clamp } from "../../Utils/MathUilts";
 import Matrix3 from "../Matrix/Matrix3";
 import Polar from "../Polar";
 
@@ -170,6 +171,20 @@ export default class Vector2 {
         this.y = e[1] * x + e[4] * y + e[7];
 
         return this;
+
+    }
+
+    angleTo( v:Vector2 ) {
+
+        const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
+
+        if ( denominator === 0 ) return Math.PI / 2;
+
+        const theta = this.dot( v ) / denominator;
+
+        // clamp, to handle numerical problems
+
+        return Math.acos( clamp( theta, - 1, 1 ) );
 
     }
 

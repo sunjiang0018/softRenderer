@@ -1,3 +1,4 @@
+import { clamp } from "../../Utils/MathUilts";
 import Matrix4 from "../Matrix/Matrix4";
 import Quaternion from "../Quaternion";
 
@@ -184,6 +185,20 @@ export default class Vector4 {
         this.w *= scalar;
 
         return this;
+
+    }
+
+    angleTo( v:Vector4 ) {
+
+        const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
+
+        if ( denominator === 0 ) return Math.PI / 2;
+
+        const theta = this.dot( v ) / denominator;
+
+        // clamp, to handle numerical problems
+
+        return Math.acos( clamp( theta, - 1, 1 ) );
 
     }
 

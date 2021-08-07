@@ -4,6 +4,7 @@ import Matrix3 from "../Matrix/Matrix3";
 import Matrix4 from "../Matrix/Matrix4";
 import Cylindrical from "../Cylindrical";
 import Spherical from "../Spherical";
+import {clamp} from "../../Utils/MathUilts";
 
 export default class Vector3 {
     x: number
@@ -480,6 +481,21 @@ export default class Vector3 {
         // normal is assumed to have unit length
 
         return this.sub(_vector.copy(normal).multiplyScalar(2 * this.dot(normal)));
+
+    }
+
+
+    angleTo( v:Vector3 ) {
+
+        const denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
+
+        if ( denominator === 0 ) return Math.PI / 2;
+
+        const theta = this.dot( v ) / denominator;
+
+        // clamp, to handle numerical problems
+
+        return Math.acos( clamp( theta, - 1, 1 ) );
 
     }
 
