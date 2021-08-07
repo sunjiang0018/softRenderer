@@ -355,7 +355,7 @@ export default class Quaternion {
             if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {
 
                 this._x = -vFrom.y;
-                this._y = vFrom.x;
+                this._y = +vFrom.x;
                 this._z = 0;
                 this._w = r;
 
