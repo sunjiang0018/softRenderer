@@ -1,8 +1,9 @@
-import Euler from "../Line/Euler";
+import Euler from "../Euler";
 import Quaternion from "../Quaternion";
 import Matrix3 from "../Matrix/Matrix3";
 import Matrix4 from "../Matrix/Matrix4";
-import Cylindrical3D from "../Cylindrical3D";
+import Cylindrical from "../Cylindrical";
+import Spherical from "../Spherical";
 
 export default class Vector3 {
     x: number
@@ -503,6 +504,12 @@ export default class Vector3 {
     }
 
 
+    setFromSpherical(s: Spherical) {
+
+        return this.setFromSphericalCoords(s.radius, s.phi, s.theta);
+
+    }
+
     setFromSphericalCoords(radius: number, phi: number, theta: number) {
 
         const sinPhiRadius = Math.sin(phi) * radius;
@@ -515,9 +522,9 @@ export default class Vector3 {
 
     }
 
-    setFromCylindrical(c: Cylindrical3D) {
+    setFromCylindrical(c: Cylindrical) {
 
-        return this.setFromCylindricalCoords(c.r, c.theta, c.z);
+        return this.setFromCylindricalCoords(c.radius, c.theta, c.z);
 
     }
 

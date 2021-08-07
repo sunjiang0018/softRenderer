@@ -1,5 +1,5 @@
 import Vector3 from "../Vector/Vector3";
-import Euler from "../Line/Euler";
+import Euler from "../Euler";
 import Quaternion from "../Quaternion";
 
 export default class Matrix4 {

@@ -1,9 +1,10 @@
 import Matrix3 from "../Matrix/Matrix3";
+import Polar from "../Polar";
 
 export default class Vector2 {
 
-    private x: number
-    private y: number
+    x: number
+    y: number
 
     constructor(x = 0, y = 0) {
         this.x = x
@@ -170,6 +171,17 @@ export default class Vector2 {
 
         return this;
 
+    }
+
+
+    setFromPolar(polar:Polar){
+       return  this.setFromPolarCoords(polar.r, polar.theta)
+    }
+
+    setFromPolarCoords(r:number, theta:number){
+        this.x = Math.cos(theta) * r
+        this.y = Math.sin(theta) * r
+        return this;
     }
 
     min(v: Vector2) {

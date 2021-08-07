@@ -1,4 +1,4 @@
-import Euler from "./Line/Euler";
+import Euler from "./Euler";
 import Vector3 from "./Vector/Vector3";
 import Matrix4 from "./Matrix/Matrix4";
 
