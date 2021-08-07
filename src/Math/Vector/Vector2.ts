@@ -351,7 +351,7 @@ export default class Vector2 {
 
     }
 
-    fromArray(array: Array<number>, offset = 0) {
+    fromArray(array: number[], offset = 0) {
 
         this.x = array[offset];
         this.y = array[offset + 1];
@@ -360,7 +360,7 @@ export default class Vector2 {
 
     }
 
-    toArray(array: Array<number> = [], offset = 0) {
+    toArray(array: number[] = [], offset = 0) {
 
         array[offset] = this.x;
         array[offset + 1] = this.y;

@@ -15,7 +15,7 @@ export default class Quaternion {
         this._w = w
     }
 
-    static slerpFlat(dst: Array<number>, dstOffset: number, src0: Array<number>, srcOffset0: number, src1: Array<number>,
+    static slerpFlat(dst: number[], dstOffset: number, src0: number[], srcOffset0: number, src1: number[],
                      srcOffset1: number, t: number) {
 
         // fuzz-free, array-based Quaternion SLERP operation
@@ -96,7 +96,7 @@ export default class Quaternion {
 
     }
 
-    static multiplyQuaternionsFlat(dst: Array<number>, dstOffset: number, src0: Array<number>, srcOffset0: number, src1: Array<number>,
+    static multiplyQuaternionsFlat(dst: number[], dstOffset: number, src0: number[], srcOffset0: number, src1: number[],
                                    srcOffset1: number) {
 
         const x0 = src0[srcOffset0];
@@ -560,7 +560,7 @@ export default class Quaternion {
 
     }
 
-    fromArray(array: Array<number>, offset = 0) {
+    fromArray(array: number[], offset = 0) {
 
         this._x = array[offset];
         this._y = array[offset + 1];
@@ -571,7 +571,7 @@ export default class Quaternion {
 
     }
 
-    toArray(array: Array<number> = [], offset = 0) {
+    toArray(array: number[] = [], offset = 0) {
 
         array[offset] = this._x;
         array[offset + 1] = this._y;
