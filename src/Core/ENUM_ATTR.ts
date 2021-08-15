@@ -1,0 +1,12 @@
+enum ENUM_ATTR {
+    NONE,
+    DOUBLE_SIDE = 0x0001,
+    TRANSPARENT = 0x0002,
+
+    MODE_PURE = 0x0020,
+    MODE_FLAT = 0x0040,
+    MODE_GOURAUD = 0x0080,
+    MODE_PHONE = 0x0100
+}
+
+export default  ENUM_ATTR
