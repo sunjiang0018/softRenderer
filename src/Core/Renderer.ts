@@ -1,3 +1,5 @@
+import PLGLoader from "../Loader/PLGLoader";
+
 export default class Renderer {
     ctx: CanvasRenderingContext2D
     width: number
@@ -8,6 +10,8 @@ export default class Renderer {
         this.ctx = ctx;
         this.width = width
         this.height = height
+        const loader = new PLGLoader('./ModelFile/cube1.plg')
+        loader.loader()
     }
 
 

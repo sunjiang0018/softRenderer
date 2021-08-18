@@ -1,10 +1,10 @@
-import ENUM_STATE from "./ENUM_STATE";
-import ENUM_ATTR from "./ENUM_ATTR";
+import POLY_STATE from "./enum/POLY_STATE";
+import POLY_ATTR from "./enum/POLY_ATTR";
 import Vector4 from "../Math/Vector/Vector4";
 
 export default class PolyF4D {
-    state = ENUM_STATE.NONE
-    attr = ENUM_ATTR.NONE
+    state = POLY_STATE.NONE
+    attr = POLY_ATTR.NONE
     color = 0
 
     vlist = new Array<Vector4>(3)

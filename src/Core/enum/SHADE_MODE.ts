@@ -1,0 +1,8 @@
+enum SHADE_MODE {
+    PURE_FLAG=0x0000,
+    FLAT_FLAG = 0x2000,
+    GOURAUD_FLAG = 0x4000,
+    PHONG_FLAG = 0x6000
+}
+
+export default SHADE_MODE

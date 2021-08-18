@@ -1,5 +1,5 @@
-import ENUM_STATE from "./ENUM_STATE";
-import ENUM_ATTR from "./ENUM_ATTR";
+import POLY_STATE from "./enum/POLY_STATE";
+import POLY_ATTR from "./enum/POLY_ATTR";
 import Vector4 from "../Math/Vector/Vector4";
 import Poly4D from "./Poly4D";
 
@@ -8,8 +8,8 @@ let objectId = 0
 export default class Object4D {
     id: number
     name: string = 'object4D'
-    state = ENUM_STATE.NONE
-    attr = ENUM_ATTR.NONE
+    state = POLY_STATE.NONE
+    attr = POLY_ATTR.NONE
 
     avgRadius = 0 //物体的平均半径，用于碰撞检测
     maxRadius= 0 //物体的最大半径

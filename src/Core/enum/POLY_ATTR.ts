@@ -1,5 +1,5 @@
-enum ENUM_ATTR {
-    NONE,
+enum POLY_ATTR {
+    NONE = 0,
     DOUBLE_SIDE = 0x0001,
     TRANSPARENT = 0x0002,
 
@@ -9,4 +9,4 @@ enum ENUM_ATTR {
     MODE_PHONE = 0x0100
 }
 
-export default  ENUM_ATTR
+export default POLY_ATTR
