@@ -1,0 +1,7 @@
+enum TRANSFORM_TYPE{
+    LOCAL_ONLY,
+    TRANS_ONLY,
+    LOCAL_TO_TRANS
+}
+
+export default TRANSFORM_TYPE
