@@ -17,16 +17,10 @@ export default class Matrix3 {
     set(n11: number, n12: number, n13: number,
         n21: number, n22: number, n23: number,
         n31: number, n32: number, n33: number) {
-        const n = this.elements
-        n[0] = n11;
-        n[1] = n12;
-        n[2] = n13;
-        n[3] = n21;
-        n[4] = n22;
-        n[5] = n23;
-        n[6] = n31;
-        n[7] = n32;
-        n[8] = n33;
+        const te = this.elements
+        te[ 0 ] = n11; te[ 1 ] = n21; te[ 2 ] = n31;
+        te[ 3 ] = n12; te[ 4 ] = n22; te[ 5 ] = n32;
+        te[ 6 ] = n13; te[ 7 ] = n23; te[ 8 ] = n33;
         return this;
     }
 

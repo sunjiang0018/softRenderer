@@ -13,8 +13,8 @@ export default class Matrix2 {
     set(n11: number, n12: number, n21: number, n22: number) {
         const n = this.elements
         n[0] = n11
-        n[1] = n12
-        n[2] = n21
+        n[2] = n12
+        n[1] = n21
         n[3] = n22
         return this
     }
