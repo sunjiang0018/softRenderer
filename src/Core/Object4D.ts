@@ -4,6 +4,7 @@ import Vector4 from "../Math/Vector/Vector4";
 import Poly4D from "./Poly4D";
 import Matrix4 from "../Math/Matrix/Matrix4";
 import TRANSFORM_TYPE from "./enum/TRANSFORM_TYPE";
+import Camera from "./Camera";
 
 let objectId = 0
 
@@ -14,10 +15,10 @@ export default class Object4D {
     attr = POLY_ATTR.NONE
 
     avgRadius = 0 //物体的平均半径，用于碰撞检测
-    maxRadius= 0 //物体的最大半径
+    maxRadius = 0 //物体的最大半径
 
     worldPosition = new Vector4()
-    dir= new Vector4()
+    dir = new Vector4()
 
 
     //局部坐标系中，用于存储物体的朝向。旋转期间将被自动更新
@@ -37,9 +38,9 @@ export default class Object4D {
         this.id = objectId++
     }
 
-    transform(mt:Matrix4, coordSelect:TRANSFORM_TYPE, isTransformBasis = true){
+    transform(mt: Matrix4, coordSelect: TRANSFORM_TYPE, isTransformBasis = true) {
         for (let vertxIndex = 0; vertxIndex < this.verticesNumber; vertxIndex++) {
-            switch (coordSelect){
+            switch (coordSelect) {
                 case TRANSFORM_TYPE.LOCAL_ONLY:
                     this.vlistLocal[vertxIndex].applyMatrix4(mt)
                     break;
@@ -53,11 +54,17 @@ export default class Object4D {
             }
         }
 
-        if(isTransformBasis){
+        if (isTransformBasis) {
             this.ux.applyMatrix4(mt)
             this.uy.applyMatrix4(mt)
             this.uz.applyMatrix4(mt)
         }
 
+    }
+
+    worldToCamera(camera: Camera) {
+        for (let i = 0; i < this.verticesNumber; i++) {
+            this.vlistTrans[i].applyMatrix4(camera.mcam)
+        }
     }
 }
