@@ -72,7 +72,7 @@ export default class Object3D {
                     this.vlistTrans[i].addVectors(this.vlistLocal[i], this.worldPosition)
                     break;
                 case TRANSFORM_TYPE.TRANS_ONLY:
-                    this.vlistLocal[i].add(this.worldPosition)
+                    this.vlistTrans[i].add(this.worldPosition)
             }
 
         }

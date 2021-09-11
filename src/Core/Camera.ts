@@ -4,7 +4,7 @@ import Vector3 from "../Math/Vector/Vector3";
 
 export default class Camera {
     state: number = 0
-    attr: number
+    attr: number = 0
 
     position: Vector3
     direction: Vector3
@@ -49,13 +49,13 @@ export default class Camera {
     mscr: Matrix4 = new Matrix4()        //用于存储透视坐标到屏幕坐标转换矩阵
 
 
-    constructor(attr: number, position: Vector3, direction: Vector3, target: Vector3, nearClipZ: number, farClipZ: number,
+    constructor( position: Vector3, direction: Vector3, nearClipZ: number, farClipZ: number,
                 fov: number, viewportWidth: number, viewportHeight: number) {
-        this.attr = attr
+        this.attr = 0
         this.position = position.clone()
         this.direction = direction.clone()
 
-        this.target = target
+        this.target = new Vector3(0,0,0)
 
         this.nearFilpZ = nearClipZ
         this.farFilpZ = farClipZ
