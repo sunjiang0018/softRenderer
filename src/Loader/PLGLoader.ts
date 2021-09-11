@@ -1,10 +1,10 @@
-import Object4D from "../Core/Object4D";
+import Object3D from "../Core/Object3D";
 import OBJECT_STATE from "../Core/enum/OBJECT_STATE";
-import Vector4 from "../Math/Vector/Vector4";
-import Poly4D from "../Core/Poly4D";
+import Poly3D from "../Core/Poly3D";
 import POLY_ATTR from "../Core/enum/POLY_ATTR";
 import SHADE_MODE from "../Core/enum/SHADE_MODE";
 import POLY_STATE from "../Core/enum/POLY_STATE";
+import Vector3 from "../Math/Vector/Vector3";
 
 export default class PLGLoader {
 
@@ -14,7 +14,7 @@ export default class PLGLoader {
         this.fileUrl = fileUrl
     }
 
-    loader(): Promise<Object4D> {
+    loader(): Promise<Object3D> {
         return new Promise((resolve, reject) => {
             const request = new XMLHttpRequest()
             const self = this
@@ -23,7 +23,7 @@ export default class PLGLoader {
 
             request.addEventListener('load', function (event) {
                 const data: string = this.response
-                const object = new Object4D()
+                const object = new Object3D()
 
                 object.state = OBJECT_STATE.AVTIVE | OBJECT_STATE.VISIBLE
 
@@ -67,23 +67,22 @@ export default class PLGLoader {
         })
     }
 
-    private readVerticesList(object: Object4D, start: number, count: number, lines: string[]) {
+    private readVerticesList(object: Object3D, start: number, count: number, lines: string[]) {
         for (let i = 0; i < count; i++, start) {
             const line = lines[start + i]
             const number = line.split(/ +/)
 
             if (number.length !== 3) throw new Error('顶点格式错误')
 
-            const vertex = new Vector4()
-            vertex.x = parseFloat(number[0])
-            vertex.y = parseFloat(number[1])
-            vertex.z = parseFloat(number[2])
+            const vertex = new Vector3()
+            vertex.set(parseFloat(number[0]), parseFloat(number[1]), parseFloat(number[2]))
 
             object.vlistLocal.push(vertex)
+            object.vlistTrans.push(vertex.clone())
         }
     }
 
-    private readPolyList(object: Object4D, start: number, count: number, lines: string[]) {
+    private readPolyList(object: Object3D, start: number, count: number, lines: string[]) {
         for (let i = 0; i < count; i++) {
             const line = lines[start + i]
             const number = line.split(/ +/)
@@ -91,7 +90,7 @@ export default class PLGLoader {
 
             if (number.length !== vertxNumber + 2 || !number[0].startsWith('0x')) throw new Error('多边形格式错误')
 
-            const poly = new Poly4D()
+            const poly = new Poly3D()
             poly.vlist = object.vlistLocal
 
             const polySurfaceDesc = parseInt(number[0])
@@ -105,7 +104,7 @@ export default class PLGLoader {
         }
     }
 
-    private computeObjectRadius(object: Object4D) {
+    private computeObjectRadius(object: Object3D) {
         object.avgRadius = 0
         object.maxRadius = 0
         for (let i = 0; i < object.verticesNumber; i++) {
@@ -117,13 +116,13 @@ export default class PLGLoader {
 
             object.avgRadius += distToVertex
 
-            if(object.maxRadius < distToVertex) object.maxRadius = distToVertex
+            if (object.maxRadius < distToVertex) object.maxRadius = distToVertex
         }
 
         object.avgRadius /= object.verticesNumber
     }
 
-    private setAttributes(poly: Poly4D, polySurfaceDesc: number) {
+    private setAttributes(poly: Poly3D, polySurfaceDesc: number) {
 
         // 设置多边形单边/双面渲染
         if (polySurfaceDesc & POLY_ATTR.DOUBLE_SIDE) {
