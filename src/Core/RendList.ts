@@ -5,6 +5,9 @@ import POLY_STATE from "./enum/POLY_STATE";
 import Camera from "./Camera";
 import Vector3 from "../Math/Vector/Vector3";
 import POLY_ATTR from "./enum/POLY_ATTR";
+import Object3D from "./Object3D";
+import OBJECT_STATE from "./enum/OBJECT_STATE";
+import Poly3D from "./Poly3D";
 
 export default class RendList {
     state = 0
@@ -17,11 +20,11 @@ export default class RendList {
     polyNumber = 0
 
 
-    private static isRender(poly: PolyF3D) {
+    private static isSkip(poly: PolyF3D) {
         return poly == null ||
             !(poly.state & POLY_STATE.ACTIVE) ||
             (poly.state & POLY_STATE.CLIPPED) ||
-            (poly.state && POLY_STATE.BACKFACE)
+            (poly.state & POLY_STATE.BACKFACE)
     }
 
     public transform(mt: Matrix4, coordSelect: TRANSFORM_TYPE) {
@@ -29,7 +32,7 @@ export default class RendList {
         for (let polyIndex = 0; polyIndex < this.polyNumber; polyIndex++) {
             const current = this.polyList[polyIndex]
 
-            if (RendList.isRender(current)) continue;
+            if (RendList.isSkip(current)) continue;
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
                 switch (coordSelect) {
@@ -55,7 +58,7 @@ export default class RendList {
         for (let i = 0; i < this.polyNumber; i++) {
             const current = this.polyList[i]
 
-            if (RendList.isRender(current)) continue;
+            if (RendList.isSkip(current)) continue;
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
                 switch (coordSelect) {
@@ -74,7 +77,7 @@ export default class RendList {
     public worldToCamera(camera: Camera) {
         for (let polyIndex = 0; polyIndex < this.polyNumber; polyIndex++) {
             const current = this.polyList[polyIndex]
-            if (RendList.isRender(current)) continue;
+            if (RendList.isSkip(current)) continue;
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
                 current.tvlist[vertexIndex].applyMatrix4(camera.mcam)
@@ -83,11 +86,11 @@ export default class RendList {
     }
 
 
-    public removeBackFaces(camera : Camera){
+    public removeBackFaces(camera: Camera) {
         for (let i = 0; i < this.polyNumber; i++) {
             const current = this.polyList[i];
 
-            if(!current || (current.state & POLY_STATE.ACTIVE) ||
+            if (!current || !(current.state & POLY_STATE.ACTIVE) ||
                 (current.state & POLY_STATE.CLIPPED) ||
                 (current.state & POLY_STATE.BACKFACE) ||
                 (current.attr & POLY_ATTR.DOUBLE_SIDE)) continue;
@@ -97,17 +100,106 @@ export default class RendList {
             u.subVectors(current.tvlist[1], current.tvlist[0]);
             v.subVectors(current.tvlist[2], current.tvlist[0]);
 
-            n.crossVectors(u,v);
+            n.crossVectors(u, v);
 
             const view = new Vector3();
 
-            view.addVectors(camera.position, current.tvlist[0]);
+            view.subVectors(camera.position, current.tvlist[0]);
 
             const dp = n.dot(view);
 
-            if(dp <= 0){
+            if (dp <= 0) {
                 current.state |= POLY_STATE.BACKFACE
             }
         }
+    }
+
+    public insertObject(object: Object3D, isInsertLocal = false) {
+
+        if (!(object.state & OBJECT_STATE.AVTIVE) ||
+            (object.state & OBJECT_STATE.CULLED) ||
+            !(object.state & OBJECT_STATE.VISIBLE)) return;
+
+        for (let i = 0; i < object.polysNum; i++) {
+            const current = object.plist[i]
+
+            if (!(current.state & POLY_STATE.ACTIVE) ||
+                (current.state & POLY_STATE.CLIPPED) ||
+                (current.state & POLY_STATE.BACKFACE)) continue
+
+            let oldVlist = current.vlist;
+
+            if (isInsertLocal) {
+                current.vlist = object.vlistLocal
+            } else {
+                current.vlist = object.vlistTrans
+            }
+
+            this.insertPoly3D(current)
+
+            current.vlist = oldVlist
+        }
+    }
+
+    public insertPoly3D(poly: Poly3D) {
+        if (this.polyNumber >= this.polyData.length) {
+            this.polyData.push(new PolyF3D())
+        }
+        this.polyList[this.polyNumber] = this.polyData[this.polyNumber];
+
+        const current :PolyF3D = this.polyData[this.polyNumber];
+        current.state = poly.state
+        current.attr = poly.attr
+        current.color = poly.color
+
+        current.tvlist[0].copy(poly.vlist[poly.vert[0]]);
+        current.tvlist[1].copy(poly.vlist[poly.vert[1]]);
+        current.tvlist[2].copy(poly.vlist[poly.vert[2]]);
+
+
+        current.vlist[0].copy(poly.vlist[poly.vert[0]]);
+        current.vlist[1].copy(poly.vlist[poly.vert[1]]);
+        current.vlist[2].copy(poly.vlist[poly.vert[2]]);
+
+
+        if (this.polyNumber === 0) {
+            current.next = null
+            current.prev = null
+        } else {
+            current.next = null
+            current.prev = this.polyData[this.polyNumber - 1]
+            this.polyData[this.polyNumber - 1].next = current
+        }
+
+        this.polyNumber++
+
+    }
+
+    public insertPolyF3D(poly3d: PolyF3D) {
+
+        if (this.polyNumber >= this.polyData.length) {
+            this.polyData.push(new PolyF3D())
+        }
+
+        this.polyList[this.polyNumber] = this.polyData[this.polyNumber]
+
+        const current = this.polyData[this.polyNumber]
+
+
+        current.copy(poly3d)
+
+        if (this.polyNumber === 0) {
+            current.next = null
+            current.prev = null
+        } else {
+            current.next = null
+            current.prev = this.polyData[this.polyNumber - 1]
+            this.polyData[this.polyNumber - 1].next = current
+        }
+        this.polyNumber++
+    }
+
+    public reset(){
+        this.polyNumber = 0
     }
 }

@@ -155,7 +155,7 @@ export default class Object3D {
 
             const view = new Vector3();
 
-            view.addVectors(camera.position, this.vlistTrans[vIndex0]);
+            view.subVectors(camera.position, this.vlistTrans[vIndex0]);
 
             const dp = n.dot(view);
 

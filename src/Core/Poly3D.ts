@@ -4,8 +4,8 @@ import Vector3 from "../Math/Vector/Vector3";
 
 export default class Poly3D {
 
-    state:POLY_STATE = POLY_STATE.NONE
-    attr:number = POLY_ATTR.NONE
+    state: POLY_STATE = POLY_STATE.ACTIVE
+    attr: POLY_ATTR = POLY_ATTR.NONE
     color = 0
 
     vlist = new Array<Vector3>()

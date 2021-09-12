@@ -9,6 +9,8 @@ import Vector3 from "../Math/Vector/Vector3";
 import Vector2 from "../Math/Vector/Vector2";
 // @ts-ignore
 import bresenham from 'bresenham';
+import Euler from "../Math/Euler";
+
 let angle = 0;
 
 export default class Renderer {
@@ -46,8 +48,7 @@ export default class Renderer {
                 const loader = new PLGLoader('./ModelFile/cube1.plg')
                 return loader.loader()
             }).then(object => {
-                debugger
-                this.objects.push(object)
+            this.objects.push(object)
         }).then(this.update.bind(this))
     }
 
@@ -55,16 +56,37 @@ export default class Renderer {
         this.clear()
         const matrix = new Matrix4()
         angle += 0.01
-        matrix.makeRotationY(angle)
-        for (let object of this.objects){
-            object.worldPosition.set(0,0,10)
-            object.transform(matrix,TRANSFORM_TYPE.LOCAL_TO_TRANS)
+        matrix.makeRotationFromEuler(new Euler(angle, angle, 0, 'YXZ'))
+        // this.renderByObject(matrix)
+        this.renderByRendList(matrix)
+    }
+
+    private renderByObject(matrix: Matrix4) {
+        for (let object of this.objects) {
+            object.reset()
+            object.worldPosition.set(0, 0, 10)
+            object.transform(matrix, TRANSFORM_TYPE.LOCAL_TO_TRANS)
             object.modelToWorld(TRANSFORM_TYPE.TRANS_ONLY)
+            object.removeBackFaces(this.camera)
             object.worldToCamera(this.camera)
-            this.objCameraToPerspective(object,this.camera)
-            this.objPerspectiveToScreen(object,this.camera)
+            this.objCameraToPerspective(object, this.camera)
+            this.objPerspectiveToScreen(object, this.camera)
             this.drawObject(object)
         }
+    }
+
+    private renderByRendList(matrix: Matrix4) {
+        const rendlist = new RendList()
+        for (let object of this.objects) {
+            rendlist.insertObject(object)
+        }
+        rendlist.transform(matrix, TRANSFORM_TYPE.LOCAL_ONLY)
+        rendlist.modelToWorld(TRANSFORM_TYPE.LOCAL_TO_TRANS, new Vector3(0, 0, 10))
+        rendlist.removeBackFaces(this.camera)
+        rendlist.worldToCamera(this.camera)
+        this.rendListCameraToPerspective(rendlist, this.camera)
+        this.rendListPerspectiveToScreen(rendlist, this.camera)
+        this.drawRendList(rendlist)
     }
 
     private clear() {
@@ -135,37 +157,8 @@ export default class Renderer {
         b.x = Math.floor(b.x)
         b.y = Math.floor(b.y)
 
-        // a.x = Math.min(this.width - 1, a.x)
-        // a.x = Math.max(0, a.x)
-        // a.y = Math.min(this.height - 1, a.y)
-        // a.y = Math.max(0, a.y)
-        // b.x = Math.min(this.width - 1, b.x)
-        // b.x = Math.max(0, b.x)
-        // b.y = Math.min(this.height - 1, b.y)
-        // b.y = Math.max(0, b.y)
-
-        // boolean steep := abs(y1 - y0) > abs(x1 - x0)
-        // if steep then
-        // swap(x0, y0)
-        // swap(x1, y1)
-        // if x0 > x1 then
-        // swap(x0, x1)
-        // swap(y0, y1)
-        // int deltax := x1 - x0
-        // int deltay := abs(y1 - y0)
-        // int error := deltax / 2
-        // int ystep
-        // int y := y0
-        // if y0 < y1 then ystep := 1 else ystep := -1
-        // for x from x0 to x1
-        // if steep then plot(y,x) else plot(x,y)
-        // error := error - deltay
-        // if error < 0 then
-        // y := y + ystep
-        // error := error + deltax
-
         const points = bresenham(a.x, a.y, b.x, b.y)
-        points.forEach((point: { x: number; y: number; }) =>{
+        points.forEach((point: { x: number; y: number; }) => {
 
             this.setColor(point.x, point.y, color)
         })
