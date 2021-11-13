@@ -64,10 +64,10 @@ export default class Object3D {
 
     }
 
-    public modelToWorld(coordSelect: TRANSFORM_TYPE){
+    public modelToWorld(coordSelect: TRANSFORM_TYPE) {
         for (let i = 0; i < this.verticesNumber; i++) {
 
-            switch (coordSelect){
+            switch (coordSelect) {
                 case TRANSFORM_TYPE.LOCAL_TO_TRANS:
                     this.vlistTrans[i].addVectors(this.vlistLocal[i], this.worldPosition)
                     break;
@@ -84,46 +84,48 @@ export default class Object3D {
         }
     }
 
-    public cullObject(camera:Camera, cullFlags: CULL_OBJECT){
+    public cullObject(camera: Camera, cullFlags: CULL_OBJECT): boolean {
         const spherePosition = this.worldPosition.clone()
 
         spherePosition.applyMatrix4(camera.mcam);
 
-        if(cullFlags & CULL_OBJECT.Z_PLANE){
-            if(((spherePosition.z - this.maxRadius) > camera.farFilpZ) ||
-                ((spherePosition.z + this.maxRadius) < camera.nearFilpZ)){
+        if (cullFlags & CULL_OBJECT.Z_PLANE) {
+            if (((spherePosition.z - this.maxRadius) > camera.farFilpZ) ||
+                ((spherePosition.z + this.maxRadius) < camera.nearFilpZ)) {
                 this.state |= OBJECT_STATE.CULLED
-                return;
+                return true
             }
         }
 
-        if(cullFlags & CULL_OBJECT.X_PLANE){
+        if (cullFlags & CULL_OBJECT.X_PLANE) {
             const zTest = 0.5 * (camera.viewPlaneWidth * spherePosition.z / camera.viewDist);
-            if(((spherePosition.x - this.maxRadius) > zTest) ||
-                ((spherePosition.x + this.maxRadius) < -zTest)){
+            if (((spherePosition.x - this.maxRadius) > zTest) ||
+                ((spherePosition.x + this.maxRadius) < -zTest)) {
                 this.state |= OBJECT_STATE.CULLED
-                return;
+                return true
             }
         }
 
-        if(cullFlags & CULL_OBJECT.Y_PLANE){
+        if (cullFlags & CULL_OBJECT.Y_PLANE) {
             const zTest = 0.5 * (camera.viewportHeight * spherePosition.z / camera.viewDist);
-            if(((spherePosition.y - this.maxRadius) > zTest) ||
-                ((spherePosition.y + this.maxRadius) < -zTest)){
+            if (((spherePosition.y - this.maxRadius) > zTest) ||
+                ((spherePosition.y + this.maxRadius) < -zTest)) {
                 this.state |= OBJECT_STATE.CULLED
-                return;
+                return true
             }
         }
+
+        return false
     }
 
-    public reset(){
-        this.state &=  ~OBJECT_STATE.CULLED;
+    public reset() {
+        this.state &= ~OBJECT_STATE.CULLED;
 
         for (let i = 0; i < this.polysNum; i++) {
 
             const current = this.plist[i];
 
-            if(!(current.state & POLY_STATE.ACTIVE)) continue;
+            if (!(current.state & POLY_STATE.ACTIVE)) continue;
 
             current.state &= ~POLY_STATE.CLIPPED;
             current.state &= ~POLY_STATE.BACKFACE;
@@ -131,13 +133,13 @@ export default class Object3D {
         }
     }
 
-    public removeBackFaces(camera : Camera){
+    public removeBackFaces(camera: Camera) {
 
-        if(this.state & OBJECT_STATE.CULLED) return;
+        if (this.state & OBJECT_STATE.CULLED) return;
 
         for (let i = 0; i < this.polysNum; i++) {
             const current = this.plist[i];
-            if(!(current.state & POLY_STATE.ACTIVE) ||
+            if (!(current.state & POLY_STATE.ACTIVE) ||
                 (current.state & POLY_STATE.CLIPPED) ||
                 (current.state & POLY_STATE.BACKFACE) ||
                 (current.attr & POLY_ATTR.DOUBLE_SIDE)) continue;
@@ -159,7 +161,7 @@ export default class Object3D {
 
             const dp = n.dot(view);
 
-            if(dp <= 0){
+            if (dp <= 0) {
                 current.state |= POLY_STATE.BACKFACE
             }
 

@@ -49,13 +49,13 @@ export default class Camera {
     mscr: Matrix4 = new Matrix4()        //用于存储透视坐标到屏幕坐标转换矩阵
 
 
-    constructor( position: Vector3, direction: Vector3, nearClipZ: number, farClipZ: number,
+    constructor(position: Vector3, direction: Vector3, nearClipZ: number, farClipZ: number,
                 fov: number, viewportWidth: number, viewportHeight: number) {
         this.attr = 0
         this.position = position.clone()
         this.direction = direction.clone()
 
-        this.target = new Vector3(0,0,0)
+        this.target = new Vector3(0, 0, 0)
 
         this.nearFilpZ = nearClipZ
         this.farFilpZ = farClipZ
@@ -96,6 +96,33 @@ export default class Camera {
             vn.set(0, -this.viewDist, -this.viewPlaneWidth / 2)
             this.btClipPlane = new Plane3D(origin.clone(), vn.clone())
         }
+
+        this.registerEventLister()
+    }
+
+
+    registerEventLister() {
+        window.addEventListener('keyup', event => {
+            switch (event.key.toLowerCase()) {
+                case "arrowup":
+                    this.direction.x -= 0.1;
+                    break;
+                case "arrowdown":
+                     this.direction.x += 0.1;
+                    break;
+
+                case "arrowright":
+                    this.direction.y -= 0.1;
+                    break;
+                case "arrowleft":
+                    this.direction.y += 0.1;
+                    break;
+            }
+        })
+    }
+
+    update() {
+        this.makeWithEuler('YXZ')
     }
 
 
@@ -201,7 +228,7 @@ export default class Camera {
 
         this.n.subVectors(this.target, this.position)
 
-        this.v.set(0,1,0)
+        this.v.set(0, 1, 0)
 
         this.u.crossVectors(this.v, this.n)
 
@@ -212,10 +239,10 @@ export default class Camera {
         this.n.normalize()
 
         uvn.set(
-            this.u.x, this.v.x,this.n.x,0,
-            this.u.y,this.v.y,this.n.y,0,
-            this.u.z,this.v.z,this.n.z,0,
-            0,0,0,1)
+            this.u.x, this.v.x, this.n.x, 0,
+            this.u.y, this.v.y, this.n.y, 0,
+            this.u.z, this.v.z, this.n.z, 0,
+            0, 0, 0, 1)
 
 
         this.mcam.multiplyMatrices(uvn, mt)

@@ -5,7 +5,7 @@ import Vector3 from "../Math/Vector/Vector3";
 export default class PolyF3D {
     state = POLY_STATE.ACTIVE
     attr = POLY_ATTR.NONE
-    color = 0
+    color = new Vector3()
 
     vlist = new Array<Vector3>()
     tvlist = new Array<Vector3>()

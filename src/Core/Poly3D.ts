@@ -6,7 +6,7 @@ export default class Poly3D {
 
     state: POLY_STATE = POLY_STATE.ACTIVE
     attr: POLY_ATTR = POLY_ATTR.NONE
-    color = 0
+    color = new Vector3()
 
     vlist = new Array<Vector3>()
     vert = new Array<number>(3)

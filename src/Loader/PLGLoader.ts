@@ -163,7 +163,7 @@ export default class PLGLoader {
         green *= 16
         blue *= 16
 
-        return (blue & 0x1f) + ((green & 0x3f) << 5) + ((red & 0x1f) << 11)
+        return new Vector3(red, green, blue)
     }
 
 

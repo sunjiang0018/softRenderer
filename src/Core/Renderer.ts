@@ -114,16 +114,8 @@ export default class Renderer {
 
             let a = new Vector2(object.vlistTrans[index0].x, object.vlistTrans[index0].y)
             let b = new Vector2(object.vlistTrans[index1].x, object.vlistTrans[index1].y)
-            let color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
-            a = new Vector2(object.vlistTrans[index1].x, object.vlistTrans[index1].y)
-            b = new Vector2(object.vlistTrans[index2].x, object.vlistTrans[index2].y)
-            color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
-            a = new Vector2(object.vlistTrans[index2].x, object.vlistTrans[index2].y)
-            b = new Vector2(object.vlistTrans[index0].x, object.vlistTrans[index0].y)
-            color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
+            let c = new Vector2(object.vlistTrans[index2].x, object.vlistTrans[index2].y)
+            this.drawTriangle(a, b, c, current.color)
         }
     }
 
@@ -137,16 +129,10 @@ export default class Renderer {
 
             let a = new Vector2(current.tvlist[0].x, current.tvlist[0].y)
             let b = new Vector2(current.tvlist[1].x, current.tvlist[1].y)
-            let color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
-            a = new Vector2(current.tvlist[1].x, current.tvlist[1].y)
-            b = new Vector2(current.tvlist[2].x, current.tvlist[2].y)
-            color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
-            a = new Vector2(current.tvlist[2].x, current.tvlist[2].y)
-            b = new Vector2(current.tvlist[0].x, current.tvlist[0].y)
-            color = new Vector3(255, 255, 255)
-            this.drawLine(a, b, color);
+            let c = new Vector2(current.tvlist[2].x, current.tvlist[2].y)
+
+            let color = current.color
+            this.drawTriangle(a, b, c, color)
         }
     }
 
@@ -164,7 +150,221 @@ export default class Renderer {
         })
     }
 
+    drawTriangle(pointA: Vector2, pointB: Vector2, pointC: Vector2, color: Vector3) {
+        if ((pointA.x === pointB.x && pointB.x === pointC.x) || (pointA.y === pointB.y && pointB.y === pointC.y)) return;
+
+        const min_clip_x = 0;
+        const max_clip_x = this.width - 1;
+        const min_clip_y = 0;
+        const max_clip_y = this.height - 1;
+
+        let temp = new Vector2(),
+            a = pointA.clone(),
+            b = pointB.clone(),
+            c = pointC.clone()
+
+        if (b.y < a.y) {
+            temp.copy(b);
+            b.copy(a);
+            a.copy(temp);
+        }
+
+        if (c.y < a.y) {
+            temp.copy(c);
+            c.copy(a);
+            a.copy(temp)
+        }
+
+        if (c.y < b.y) {
+            temp.copy(c);
+            c.copy(b);
+            b.copy(temp);
+        }
+
+        if (c.y < min_clip_y || a.y > max_clip_y ||
+            (a.x < min_clip_x && b.x < min_clip_x && c.x < min_clip_x) ||
+            (a.x > max_clip_x && b.x > max_clip_x && c.x > max_clip_x))
+            return;
+
+        if (a.y === b.y) {
+            this.drawTopTri(a, b, c, color)
+        } else if (b.y === c.y) {
+            this.drawBottomTri(a, b, c, color)
+        } else {
+            const newX = a.x + Math.floor(0.5 + (b.y - a.y) * (c.x - a.x) / (c.y - a.y));
+            let temp = b.clone()
+            temp.x = newX;
+            this.drawTopTri(b.clone(), temp, c.clone(), color)
+            this.drawBottomTri(a.clone(), temp, b.clone(), color)
+        }
+
+    }
+
+    drawTopTri(pointA: Vector2, pointB: Vector2, pointC: Vector2, color: Vector3) {
+        const min_clip_x = 0;
+        const max_clip_x = this.width - 1;
+        const min_clip_y = 0;
+        const max_clip_y = this.height - 1;
+
+        const a = pointA.clone(),
+            b = pointB.clone(),
+            c = pointC.clone();
+
+        let temp = 0;
+
+        if (b.x < a.x) {
+            temp = b.x;
+            b.x = a.x;
+            a.x = temp;
+        }
+
+        const height = c.y - a.y;
+        const dxLeft = (c.x - a.x) / height;
+        const dxRight = (c.x - b.x) / height;
+
+        let startX = a.x;
+        let endX = b.x;
+
+        if (a.y < min_clip_y) {
+            startX = startX + dxLeft * (-a.y + min_clip_y);
+            endX = endX + dxRight * (-b.x + min_clip_y);
+
+            a.y = min_clip_y;
+        }
+
+        if (c.y > max_clip_y) {
+            c.y = max_clip_y
+        }
+
+
+        if (a.x >= min_clip_x && a.x <= max_clip_x &&
+            b.x >= min_clip_x && b.x <= max_clip_x &&
+            c.x >= min_clip_x && c.x <= max_clip_x) {
+            for (let tempY = Math.round(a.y); tempY <= Math.round(c.y); tempY++) {
+                for (let i = Math.round(startX); i < Math.round(endX); i++) {
+                    this.setColor(i, tempY, color)
+                }
+                startX += dxLeft
+                endX += dxRight
+            }
+
+        } else {
+            for (let tempY = Math.round(a.y); tempY <= Math.round(c.y); tempY++) {
+                let left = Math.round(startX)
+                let right = Math.round(endX)
+
+                startX += dxLeft
+                endX += dxRight
+
+                // clip line
+                if (left < min_clip_x) {
+                    left = min_clip_x;
+
+                    if (right < min_clip_x)
+                        continue;
+                }
+
+                if (right > max_clip_x) {
+                    right = max_clip_x;
+
+                    if (left > max_clip_x)
+                        continue;
+                }
+                for (let i = left; i < right; i++) {
+                    this.setColor(i, tempY, color)
+                }
+
+            }
+        }
+    }
+
+    drawBottomTri(pointA: Vector2, pointB: Vector2, pointC: Vector2, color: Vector3) {
+        const min_clip_x = 0;
+        const max_clip_x = this.width - 1;
+        const min_clip_y = 0;
+        const max_clip_y = this.height - 1;
+
+
+        const a = pointA.clone(),
+            b = pointB.clone(),
+            c = pointC.clone();
+
+        if (a.y === b.y || a.y === c.y) {
+            return
+        }
+        let tempX
+
+        if (c.x < b.x) {
+            tempX = b.x;
+            b.x = c.x;
+            c.x = tempX;
+        }
+
+        const height = c.y - a.y
+
+        const dxLeft = (b.x - a.x) / height
+        const dxRight = (c.x - a.x) / height
+
+        let startX = a.x
+        let endX = a.x
+
+        if (a.y < min_clip_y) {
+            startX = startX + dxLeft * (-a.y + min_clip_y);
+            endX = endX + dxRight * (-b.x + min_clip_y);
+
+            a.y = min_clip_y;
+        }
+
+        if (c.y > max_clip_y) {
+            c.y = max_clip_y
+        }
+
+
+        if (a.x >= min_clip_x && a.x <= max_clip_x &&
+            b.x >= min_clip_x && b.x <= max_clip_x &&
+            c.x >= min_clip_x && c.x <= max_clip_x) {
+            for (let tempY = Math.round(a.y); tempY <= Math.round(c.y); tempY++) {
+                for (let i = Math.round(startX); i < Math.round(endX); i++) {
+                    this.setColor(i, tempY, color)
+                }
+                startX += dxLeft
+                endX += dxRight
+            }
+
+        } else {
+            for (let tempY = Math.round(a.y); tempY <= Math.round(c.y); tempY++) {
+                let left = Math.round(startX)
+                let right = Math.round(endX)
+
+                startX += dxLeft
+                endX += dxRight
+
+                // clip line
+                if (left < min_clip_x) {
+                    left = min_clip_x;
+
+                    if (right < min_clip_x)
+                        continue;
+                }
+
+                if (right > max_clip_x) {
+                    right = max_clip_x;
+
+                    if (left > max_clip_x)
+                        continue;
+                }
+                for (let i = left; i < right; i++) {
+                    this.setColor(i, tempY, color)
+                }
+
+            }
+        }
+
+    }
+
     setColor(x: number, y: number, color: Vector3) {
+        if (x < 0 || y < 0 || x > this.width || y > this.height) return;
+
         const index = (this.width * y + x) * 4
         this.buffer[index] = color.x;
         this.buffer[index + 1] = color.y;
@@ -174,6 +374,7 @@ export default class Renderer {
 
     private update() {
         this.draw()
+        this.camera.update()
         // @ts-ignore
         this.imageData && this.ctx.putImageData(this.imageData, 0, 0)
         requestAnimationFrame(this.update.bind(this))
