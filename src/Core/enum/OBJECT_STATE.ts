@@ -5,3 +5,6 @@ enum OBJECT_STATE {
 }
 
 export default OBJECT_STATE
+
+export const MAX_VERTIVES = 4096
+export const MAX_POLYS = 8192

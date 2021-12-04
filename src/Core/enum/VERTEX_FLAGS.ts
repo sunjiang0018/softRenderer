@@ -1,0 +1,18 @@
+enum VERTEX_FLAGS {
+    OVERRIDE_MASK = 0xf000,     // 该掩码用于提取值
+
+    OVERRIDE_CONSTANT = 0x1000,
+    OVERRIDE_EMISSIVE = 0x1000,
+    OVERRIDE_PURE = 0x1000,
+    OVERRIDE_FLAT = 0x2000,
+    OVERRIDE_GOURAUD = 0x4000,
+    OVERRIDE_TEXTURE = 0x8000,
+
+    INVERT_TEXTURE_U = 0x0080,  // 反转问题坐标U
+    INVERT_TEXTURE_V = 0x0100,  // 反转问题坐标V
+    INVERT_SWAP_UV = 0x0800,    // 讲问题坐标u和v互换
+
+
+}
+
+export default VERTEX_FLAGS

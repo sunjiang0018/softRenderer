@@ -37,15 +37,15 @@ export default class RendList {
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
                 switch (coordSelect) {
                     case TRANSFORM_TYPE.LOCAL_ONLY:
-                        current.vlist[vertexIndex].applyMatrix4(mt)
+                        current.vList[vertexIndex].applyMatrix4(mt)
                         break;
                     case TRANSFORM_TYPE.TRANS_ONLY:
-                        current.tvlist[vertexIndex].applyMatrix4(mt)
+                        current.tvList[vertexIndex].applyMatrix4(mt)
                         break;
                     case TRANSFORM_TYPE.LOCAL_TO_TRANS:
-                        let result = current.vlist[vertexIndex].clone()
+                        let result = current.vList[vertexIndex].clone()
                         result.applyMatrix4(mt)
-                        current.tvlist[vertexIndex].copy(result)
+                        current.tvList[vertexIndex].copy(result)
                         break;
                 }
 
@@ -63,10 +63,10 @@ export default class RendList {
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
                 switch (coordSelect) {
                     case TRANSFORM_TYPE.LOCAL_TO_TRANS:
-                        current.tvlist[vertexIndex].addVectors(current.vlist[vertexIndex], worldPosition);
+                        current.tvList[vertexIndex].addVectors(current.vList[vertexIndex], worldPosition);
                         break;
                     case TRANSFORM_TYPE.TRANS_ONLY:
-                        current.tvlist[vertexIndex].add(worldPosition);
+                        current.tvList[vertexIndex].add(worldPosition);
                         break;
                 }
             }
@@ -80,7 +80,7 @@ export default class RendList {
             if (RendList.isSkip(current)) continue;
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
-                current.tvlist[vertexIndex].applyMatrix4(camera.mcam)
+                current.tvList[vertexIndex].applyMatrix4(camera.mcam)
             }
         }
     }
@@ -97,14 +97,14 @@ export default class RendList {
 
             const u = new Vector3(), v = new Vector3(), n = new Vector3()
 
-            u.subVectors(current.tvlist[1], current.tvlist[0]);
-            v.subVectors(current.tvlist[2], current.tvlist[0]);
+            u.subVectors(current.tvList[1], current.tvList[0]);
+            v.subVectors(current.tvList[2], current.tvList[0]);
 
             n.crossVectors(u, v);
 
             const view = new Vector3();
 
-            view.subVectors(camera.position, current.tvlist[0]);
+            view.subVectors(camera.position, current.tvList[0]);
 
             const dp = n.dot(view);
 
@@ -130,9 +130,9 @@ export default class RendList {
             let oldVlist = current.vlist;
 
             if (isInsertLocal) {
-                current.vlist = object.vlistLocal
+                current.vlist = object.vListLocal
             } else {
-                current.vlist = object.vlistTrans
+                current.vlist = object.vListTrans
             }
 
             this.insertPoly3D(current)
@@ -152,14 +152,14 @@ export default class RendList {
         current.attr = poly.attr
         current.color = poly.color
 
-        current.tvlist[0].copy(poly.vlist[poly.vert[0]]);
-        current.tvlist[1].copy(poly.vlist[poly.vert[1]]);
-        current.tvlist[2].copy(poly.vlist[poly.vert[2]]);
+        current.tvList[0].copy(poly.vlist[poly.vert[0]]);
+        current.tvList[1].copy(poly.vlist[poly.vert[1]]);
+        current.tvList[2].copy(poly.vlist[poly.vert[2]]);
 
 
-        current.vlist[0].copy(poly.vlist[poly.vert[0]]);
-        current.vlist[1].copy(poly.vlist[poly.vert[1]]);
-        current.vlist[2].copy(poly.vlist[poly.vert[2]]);
+        current.vList[0].copy(poly.vlist[poly.vert[0]]);
+        current.vList[1].copy(poly.vlist[poly.vert[1]]);
+        current.vList[2].copy(poly.vlist[poly.vert[2]]);
 
 
         if (this.polyNumber === 0) {

@@ -112,9 +112,9 @@ export default class Renderer {
             const index1 = current.vert[1];
             const index2 = current.vert[2];
 
-            let a = new Vector2(object.vlistTrans[index0].x, object.vlistTrans[index0].y)
-            let b = new Vector2(object.vlistTrans[index1].x, object.vlistTrans[index1].y)
-            let c = new Vector2(object.vlistTrans[index2].x, object.vlistTrans[index2].y)
+            let a = new Vector2(object.vListTrans[index0].x, object.vListTrans[index0].y)
+            let b = new Vector2(object.vListTrans[index1].x, object.vListTrans[index1].y)
+            let c = new Vector2(object.vListTrans[index2].x, object.vListTrans[index2].y)
             this.drawTriangle(a, b, c, current.color)
         }
     }
@@ -127,9 +127,9 @@ export default class Renderer {
                 (current.state & POLY_STATE.CLIPPED) ||
                 (current.state & POLY_STATE.BACKFACE)) continue;
 
-            let a = new Vector2(current.tvlist[0].x, current.tvlist[0].y)
-            let b = new Vector2(current.tvlist[1].x, current.tvlist[1].y)
-            let c = new Vector2(current.tvlist[2].x, current.tvlist[2].y)
+            let a = new Vector2(current.tvList[0].x, current.tvList[0].y)
+            let b = new Vector2(current.tvList[1].x, current.tvList[1].y)
+            let c = new Vector2(current.tvList[2].x, current.tvList[2].y)
 
             let color = current.color
             this.drawTriangle(a, b, c, color)
@@ -393,7 +393,7 @@ export default class Renderer {
 
     objCameraToPerspective(object: Object3D, camera: Camera) {
         for (let i = 0; i < object.verticesNumber; i++) {
-            const current = object.vlistTrans[i]
+            const current = object.vListTrans[i]
             const z = current.z;
 
             current.x = camera.viewDist * current.x / z;
@@ -421,7 +421,7 @@ export default class Renderer {
                 (current.state & POLY_STATE.BACKFACE)) continue;
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
-                const currVertex = current.tvlist[vertexIndex];
+                const currVertex = current.tvList[vertexIndex];
                 const z = currVertex.z;
                 currVertex.x = camera.viewDist * currVertex.x / z;
                 currVertex.y = camera.viewDist * currVertex.y * camera.aspectRatio / z;
@@ -446,8 +446,8 @@ export default class Renderer {
         const alpha = (0.5 * camera.viewportWidth - 0.5)
         const beta = (0.5 * camera.viewportHeight - 0.5)
         for (let i = 0; i < object.verticesNumber; i++) {
-            object.vlistTrans[i].x = alpha + alpha * object.vlistTrans[i].x;
-            object.vlistTrans[i].y = beta - beta * object.vlistTrans[i].y;
+            object.vListTrans[i].x = alpha + alpha * object.vListTrans[i].x;
+            object.vListTrans[i].y = beta - beta * object.vListTrans[i].y;
         }
     }
 
@@ -476,7 +476,7 @@ export default class Renderer {
             const beta = (0.5 * camera.viewportHeight - 0.5)
 
             for (let vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
-                const currVertex = current.tvlist[vertexIndex];
+                const currVertex = current.tvList[vertexIndex];
                 currVertex.x = alpha + alpha * currVertex.x;
                 currVertex.y = beta - beta * currVertex.y;
             }

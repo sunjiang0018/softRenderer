@@ -6,17 +6,27 @@ export default class PolyF3D {
     state = POLY_STATE.ACTIVE
     attr = POLY_ATTR.NONE
     color = new Vector3()
+    litColor = new Array<Vector3>(3)
 
-    vlist = new Array<Vector3>()
-    tvlist = new Array<Vector3>()
+    texture: ImageData | null = null
+
+    mati = 0
+
+    nLength = 0
+
+    normal = new Vector3()
+
+    vList = new Array<Vector3>(3)
+    tvList = new Array<Vector3>(3)
 
     next: PolyF3D | null = null
     prev: PolyF3D | null = null
 
     constructor() {
         for (let i = 0; i < 3; i++) {
-            this.vlist.push(new Vector3())
-            this.tvlist.push(new Vector3())
+            this.litColor[i] = new Vector3()
+            this.vList[i] = new Vector3()
+            this.tvList[i] = new Vector3()
         }
     }
 
@@ -31,8 +41,8 @@ export default class PolyF3D {
         result.prev = this.prev
 
         for (let i = 0; i < 3; i++) {
-            result.vlist[i].copy(this.vlist[i])
-            result.tvlist[i].copy(this.tvlist[i])
+            result.vList[i].copy(this.vList[i])
+            result.tvList[i].copy(this.tvList[i])
         }
 
         return result
@@ -47,8 +57,8 @@ export default class PolyF3D {
         this.prev = polyf3d.prev
 
         for (let i = 0; i < 3; i++) {
-            this.vlist[i].copy(polyf3d.vlist[i])
-            this.tvlist[i].copy(polyf3d.tvlist[i])
+            this.vList[i].copy(polyf3d.vList[i])
+            this.tvList[i].copy(polyf3d.tvList[i])
         }
 
     }

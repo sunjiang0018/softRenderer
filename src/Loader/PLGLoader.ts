@@ -5,6 +5,7 @@ import POLY_ATTR from "../Core/enum/POLY_ATTR";
 import SHADE_MODE from "../Core/enum/SHADE_MODE";
 import POLY_STATE from "../Core/enum/POLY_STATE";
 import Vector3 from "../Math/Vector/Vector3";
+import Vertex from "../Core/Vertex";
 
 export default class PLGLoader {
 
@@ -74,11 +75,11 @@ export default class PLGLoader {
 
             if (number.length !== 3) throw new Error('顶点格式错误')
 
-            const vertex = new Vector3()
-            vertex.set(parseFloat(number[0]), parseFloat(number[1]), parseFloat(number[2]))
+            const vertex = new Vertex()
+            vertex.v.set(parseFloat(number[0]), parseFloat(number[1]), parseFloat(number[2]))
 
-            object.vlistLocal.push(vertex)
-            object.vlistTrans.push(vertex.clone())
+            object.vListLocal.push(vertex)
+            object.vListTrans.push(vertex.clone())
         }
     }
 
@@ -91,7 +92,7 @@ export default class PLGLoader {
             if (number.length !== vertxNumber + 2 || !number[0].startsWith('0x')) throw new Error('多边形格式错误')
 
             const poly = new Poly3D()
-            poly.vlist = object.vlistLocal
+            poly.vlist = object.vListLocal
 
             const polySurfaceDesc = parseInt(number[0])
             poly.vert[0] = parseInt(number[2])
@@ -105,21 +106,21 @@ export default class PLGLoader {
     }
 
     private computeObjectRadius(object: Object3D) {
-        object.avgRadius = 0
-        object.maxRadius = 0
+        object.avgRadius[0] = 0
+        object.maxRadius[0] = 0
         for (let i = 0; i < object.verticesNumber; i++) {
-            const x = object.vlistLocal[i].x
-            const y = object.vlistLocal[i].y
-            const z = object.vlistLocal[i].z
+            const x = object.vListLocal[i].v.x
+            const y = object.vListLocal[i].v.y
+            const z = object.vListLocal[i].v.z
 
             let distToVertex = Math.sqrt(x * x + y * y + z * z)
 
-            object.avgRadius += distToVertex
+            object.avgRadius[0] += distToVertex
 
-            if (object.maxRadius < distToVertex) object.maxRadius = distToVertex
+            if (object.maxRadius[0] < distToVertex) object.maxRadius[0] = distToVertex
         }
 
-        object.avgRadius /= object.verticesNumber
+        object.avgRadius[0] /= object.verticesNumber
     }
 
     private setAttributes(poly: Poly3D, polySurfaceDesc: number) {
